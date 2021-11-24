@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+C:/Users/deofr/C/Prog-Lab-5/bmpmaster.c
+stdio.h
+-
+stdlib.h
+-
+bmpmaster.h
+C:/Users/deofr/C/Prog-Lab-5/bmpmaster.h
+
 C:/Users/deofr/C/Prog-Lab-5/bmpmaster.h
 
 C:/Users/deofr/C/Prog-Lab-5/main.c

@@ -121,13 +121,13 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h) {
 
     Pixel **pixel_arr = declarePixelArray(info_h.Height, info_h.Width);
 
-   // int cur_pix = 0;
     for (int i = info_h.Height - 1; i >= 0; i--) {
         for (int j = 0; j < info_h.Width; j++) {
-            pixel_arr[j][i].Red = fgetc(in);
-            pixel_arr[j][i].Green = fgetc(in);
-            pixel_arr[j][i].Blue = fgetc(in);
-            pixel_arr[j][i].Alpha = fgetc(in);
+            pixel_arr[i][j].Red = fgetc(in);
+            pixel_arr[i][j].Green = fgetc(in);
+            pixel_arr[i][j].Blue = fgetc(in);
+            pixel_arr[i][j].Alpha = fgetc(in);
+
         }
     }
 
