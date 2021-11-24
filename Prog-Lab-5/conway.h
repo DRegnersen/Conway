@@ -1,0 +1,4 @@
+#ifndef PROG_LAB_5_CONWAY_H
+#define PROG_LAB_5_CONWAY_H
+
+#endif //PROG_LAB_5_CONWAY_H
