@@ -3,7 +3,7 @@
 #include "bmpmaster.h"
 
 int main() {
-    FILE *in = fopen("C:\\Users\\deofr\\C\\Prog-Lab-5\\giraffe.bmp", "rb");
+    FILE *in = fopen("C:\\Users\\deofr\\C\\Prog-Lab-5\\mickey.bmp", "rb");
 
     if (in == NULL) {
         printf("ERROR! File not found.\n");
@@ -14,6 +14,17 @@ int main() {
     InfoHeader info_h = readInfoHeader(in);
 
     Pixel **array = parsePixelArray(in, file_h, info_h);
+
+    for (int i = 0; i < info_h.Height; i++) {
+        for (int j = 0; j < info_h.Width; j++) {
+
+            printf("%d ", array[i][j]);
+
+            //  printf(" ");
+
+        }
+        printf("\n");
+    }
 
     createFile("C:\\Users\\deofr\\C\\Prog-Lab-5\\new-file.bmp", file_h, info_h, array);
 

@@ -99,7 +99,7 @@ InfoHeader readInfoHeader(FILE *in) {
         new_ih.ClrTabSize *= 2;
     }
 
-    new_ih.ColorTable = (Pixel *) malloc(new_ih.ClrTabSize * sizeof(Pixel));
+    new_ih.ColorTable = (Color *) malloc(new_ih.ClrTabSize * sizeof(Color));
 
     if (new_ih.ColorTable == NULL) {
         printf("ERROR! Segmentation fault.\n");
@@ -122,12 +122,21 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h) {
     Pixel **pixel_arr = declarePixelArray(info_h.Height, info_h.Width);
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
-        for (int j = 0; j < info_h.Width; j++) {
-            pixel_arr[i][j].Red = fgetc(in);
-            pixel_arr[i][j].Green = fgetc(in);
-            pixel_arr[i][j].Blue = fgetc(in);
-            pixel_arr[i][j].Alpha = fgetc(in);
+        int cur_byte = fgetc(in);
+        int read_byte_num = 1;
 
+        for (int j = 0; j < info_h.Width; j++) {
+            pixel_arr[i][j] = (cur_byte & (1 << (7 - j % 8))) >> (7 - j % 8);
+
+            if (7 - j % 8 == 0) {
+                cur_byte = fgetc(in);
+                read_byte_num++;
+            }
+        }
+
+        while (read_byte_num % 4 != 0) {
+            fgetc(in);
+            read_byte_num++;
         }
     }
 
@@ -177,15 +186,32 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
                 info_h.ColorTable[i].Blue, info_h.ColorTable[i].Alpha);
     }
 
-    while (ftell(out) < file_h.OffBits) {
-        fprintf(out, "%c", 0);
-    }
-
     for (int i = info_h.Height - 1; i >= 0; i--) {
-        for (int j = 0; j < info_h.Width; j++) {
-            fprintf(out, "%c%c%c%c", pixel_arr[i][j].Red, pixel_arr[i][j].Green,
-                    pixel_arr[i][j].Blue, pixel_arr[i][j].Alpha);
+        int write_byte_num = 0;
+        int new_byte = 0;
+        int bit_pos = 7;
 
+        for (int j = 0; j < info_h.Width; j++) {
+            new_byte += pixel_arr[i][j] << bit_pos;
+            bit_pos--;
+
+            if (bit_pos < 0) {
+                fprintf(out, "%c", new_byte);
+                write_byte_num++;
+                new_byte = 0;
+                bit_pos = 7;
+            }
+        }
+
+        if (new_byte != 0) {
+            fprintf(out, "%c", new_byte);
+            write_byte_num++;
+        }
+
+        while (write_byte_num % 4 != 0) {
+            fprintf(out, "%c", 0);
+            write_byte_num++;
         }
     }
+
 }

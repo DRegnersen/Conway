@@ -3,12 +3,14 @@
 
 #define MONOCHROME 1
 
+typedef int Pixel;
+
 typedef struct {
     int Red;
     int Green;
     int Blue;
     int Alpha;
-} Pixel;
+} Color;
 
 typedef struct {
     char Type[2];
@@ -31,7 +33,7 @@ typedef struct {
     unsigned long ClrUsed;
     unsigned long ClrImportant;
     int ClrTabSize;
-    Pixel* ColorTable;
+    Color *ColorTable;
 } InfoHeader;
 
 Pixel **declarePixelArray(int height, int width);
@@ -43,5 +45,7 @@ InfoHeader readInfoHeader(FILE *in);
 Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h);
 
 void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pixel_arr);
+
+void putByteIntoArray(FILE *in, InfoHeader info_h, Pixel ***array, int start_idx);
 
 #endif //PROG_LAB_5_BMPMASTER_H
