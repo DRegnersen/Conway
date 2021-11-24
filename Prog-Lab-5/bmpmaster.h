@@ -4,6 +4,13 @@
 #define MONOCHROME 1
 
 typedef struct {
+    int Red;
+    int Green;
+    int Blue;
+    int Alpha;
+} Pixel;
+
+typedef struct {
     char Type[2];
     unsigned long Size;
     unsigned int Reserved1;
@@ -23,15 +30,9 @@ typedef struct {
     long YPelsPerMeter;
     unsigned long ClrUsed;
     unsigned long ClrImportant;
+    int ClrTabSize;
+    Pixel* ColorTable;
 } InfoHeader;
-
-typedef struct {
-    int Red;
-    int Green;
-    int Blue;
-    int Alpha;
-    int Color;
-} Pixel;
 
 Pixel **declarePixelArray(int height, int width);
 

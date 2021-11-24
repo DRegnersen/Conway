@@ -94,6 +94,25 @@ InfoHeader readInfoHeader(FILE *in) {
 
     new_ih.ClrImportant = convertFromBytes(in, 4);
 
+    new_ih.ClrTabSize = 1;
+    for (int i = 0; i < new_ih.BitCount; i++) {
+        new_ih.ClrTabSize *= 2;
+    }
+
+    new_ih.ColorTable = (Pixel *) malloc(new_ih.ClrTabSize * sizeof(Pixel));
+
+    if (new_ih.ColorTable == NULL) {
+        printf("ERROR! Segmentation fault.\n");
+        return new_ih;
+    }
+
+    for (int i = 0; i < new_ih.ClrTabSize; i++) {
+        new_ih.ColorTable[i].Red = fgetc(in);
+        new_ih.ColorTable[i].Green = fgetc(in);
+        new_ih.ColorTable[i].Blue = fgetc(in);
+        new_ih.ColorTable[i].Alpha = fgetc(in);
+    }
+
     return new_ih;
 }
 
@@ -102,17 +121,13 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h) {
 
     Pixel **pixel_arr = declarePixelArray(info_h.Height, info_h.Width);
 
+   // int cur_pix = 0;
     for (int i = info_h.Height - 1; i >= 0; i--) {
         for (int j = 0; j < info_h.Width; j++) {
-            if (MONOCHROME) {
-                pixel_arr[i][j].Color = (fgetc(in) == 0) ? 0 : 255;
-                // pixel_arr[i][j].Color = fgetc(in);
-            } else {
-                pixel_arr[i][j].Red = fgetc(in);
-                pixel_arr[i][j].Green = fgetc(in);
-                pixel_arr[i][j].Blue = fgetc(in);
-                pixel_arr[i][j].Alpha = fgetc(in);
-            }
+            pixel_arr[j][i].Red = fgetc(in);
+            pixel_arr[j][i].Green = fgetc(in);
+            pixel_arr[j][i].Blue = fgetc(in);
+            pixel_arr[j][i].Alpha = fgetc(in);
         }
     }
 
@@ -157,18 +172,20 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
 
     putBytes(out, info_h.ClrImportant, 4);
 
-    for (int i = 54; i < file_h.OffBits; i++) {
+    for (int i = 0; i < info_h.ClrTabSize; i++) {
+        fprintf(out, "%c%c%c%c", info_h.ColorTable[i].Red, info_h.ColorTable[i].Green,
+                info_h.ColorTable[i].Blue, info_h.ColorTable[i].Alpha);
+    }
+
+    while (ftell(out) < file_h.OffBits) {
         fprintf(out, "%c", 0);
     }
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
         for (int j = 0; j < info_h.Width; j++) {
-            if (MONOCHROME) {
-                fprintf(out, "%c", pixel_arr[i][j].Color);
-            } else {
-                fprintf(out, "%c%c%c%c", pixel_arr[i][j].Red, pixel_arr[i][j].Green,
-                        pixel_arr[i][j].Blue, pixel_arr[i][j].Alpha);
-            }
+            fprintf(out, "%c%c%c%c", pixel_arr[i][j].Red, pixel_arr[i][j].Green,
+                    pixel_arr[i][j].Blue, pixel_arr[i][j].Alpha);
+
         }
     }
 }
