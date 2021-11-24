@@ -3,7 +3,6 @@
 
 #define MONOCHROME 1
 
-#pragma pack(1)
 typedef struct {
     char Type[2];
     unsigned long Size;
@@ -31,6 +30,7 @@ typedef struct {
     int Green;
     int Blue;
     int Alpha;
+    int Color;
 } Pixel;
 
 Pixel **declarePixelArray(int height, int width);
@@ -40,5 +40,7 @@ FileHeader readFileHeader(FILE *in);
 InfoHeader readInfoHeader(FILE *in);
 
 Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h);
+
+void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pixel_arr);
 
 #endif //PROG_LAB_5_BMPMASTER_H

@@ -43,8 +43,6 @@ void putBytes(FILE *out, long value, int bytes_num) {
 FileHeader readFileHeader(FILE *in) {
     FileHeader new_fh;
 
-    // fread(&new_fh, sizeof(new_fh), 1, in);
-
     new_fh.Type[0] = fgetc(in);
     new_fh.Type[1] = fgetc(in);
     new_fh.Type[2] = 0;
@@ -106,17 +104,22 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h) {
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
         for (int j = 0; j < info_h.Width; j++) {
-            pixel_arr[i][j].Red = fgetc(in);
-            pixel_arr[i][j].Green = fgetc(in);
-            pixel_arr[i][j].Blue = fgetc(in);
-            pixel_arr[i][j].Alpha = fgetc(in);
+            if (MONOCHROME) {
+                pixel_arr[i][j].Color = (fgetc(in) == 0) ? 0 : 255;
+                // pixel_arr[i][j].Color = fgetc(in);
+            } else {
+                pixel_arr[i][j].Red = fgetc(in);
+                pixel_arr[i][j].Green = fgetc(in);
+                pixel_arr[i][j].Blue = fgetc(in);
+                pixel_arr[i][j].Alpha = fgetc(in);
+            }
         }
     }
 
     return pixel_arr;
 }
 
-void createBMPFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pixel_arr) {
+void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pixel_arr) {
     FILE *out = fopen(filename, "wb");
 
     if (out == NULL) {
@@ -154,14 +157,18 @@ void createBMPFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel *
 
     putBytes(out, info_h.ClrImportant, 4);
 
-    while (ftell(out) < file_h.OffBits) {
+    for (int i = 54; i < file_h.OffBits; i++) {
         fprintf(out, "%c", 0);
     }
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
         for (int j = 0; j < info_h.Width; j++) {
-            fprintf(out, "%c%c%c%c", pixel_arr[i][j].Red, pixel_arr[i][j].Green,
-                    pixel_arr[i][j].Blue, pixel_arr[i][j].Alpha);
+            if (MONOCHROME) {
+                fprintf(out, "%c", pixel_arr[i][j].Color);
+            } else {
+                fprintf(out, "%c%c%c%c", pixel_arr[i][j].Red, pixel_arr[i][j].Green,
+                        pixel_arr[i][j].Blue, pixel_arr[i][j].Alpha);
+            }
         }
     }
 }
