@@ -46,6 +46,4 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h);
 
 void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pixel_arr);
 
-void putByteIntoArray(FILE *in, InfoHeader info_h, Pixel ***array, int start_idx);
-
 #endif //PROG_LAB_5_BMPMASTER_H

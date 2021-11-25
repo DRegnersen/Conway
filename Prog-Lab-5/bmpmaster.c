@@ -123,20 +123,20 @@ Pixel **parsePixelArray(FILE *in, FileHeader file_h, InfoHeader info_h) {
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
         int cur_byte = fgetc(in);
-        int read_byte_num = 1;
+        int read_byte_count = 1;
 
         for (int j = 0; j < info_h.Width; j++) {
             pixel_arr[i][j] = (cur_byte & (1 << (7 - j % 8))) >> (7 - j % 8);
 
             if (7 - j % 8 == 0) {
                 cur_byte = fgetc(in);
-                read_byte_num++;
+                read_byte_count++;
             }
         }
 
-        while (read_byte_num % 4 != 0) {
+        while (read_byte_count % 4 != 0) {
             fgetc(in);
-            read_byte_num++;
+            read_byte_count++;
         }
     }
 
@@ -187,7 +187,7 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
     }
 
     for (int i = info_h.Height - 1; i >= 0; i--) {
-        int write_byte_num = 0;
+        int write_byte_count = 0;
         int new_byte = 0;
         int bit_pos = 7;
 
@@ -197,7 +197,7 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
 
             if (bit_pos < 0) {
                 fprintf(out, "%c", new_byte);
-                write_byte_num++;
+                write_byte_count++;
                 new_byte = 0;
                 bit_pos = 7;
             }
@@ -205,12 +205,12 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
 
         if (new_byte != 0) {
             fprintf(out, "%c", new_byte);
-            write_byte_num++;
+            write_byte_count++;
         }
 
-        while (write_byte_num % 4 != 0) {
+        while (write_byte_count % 4 != 0) {
             fprintf(out, "%c", 0);
-            write_byte_num++;
+            write_byte_count++;
         }
     }
 

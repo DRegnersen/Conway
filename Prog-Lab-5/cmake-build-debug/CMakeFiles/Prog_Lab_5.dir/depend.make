@@ -9,4 +9,5 @@ CMakeFiles/Prog_Lab_5.dir/conway.c.obj: \
  ../conway.h
 CMakeFiles/Prog_Lab_5.dir/main.c.obj: \
  ../bmpmaster.h \
+ ../conway.h \
  ../main.c
