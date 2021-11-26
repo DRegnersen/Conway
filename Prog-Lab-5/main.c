@@ -3,7 +3,7 @@
 #include "conway.h"
 
 int main() {
-    FILE *in = fopen("C:\\Users\\deofr\\C\\Prog-Lab-5\\test.bmp", "rb");
+    FILE *in = fopen("C:\\Users\\deofr\\C\\Prog-Lab-5\\mickey.bmp", "rb");
 
     if (in == NULL) {
         printf("ERROR! File not found.\n");
@@ -15,7 +15,7 @@ int main() {
 
     Pixel **array = parsePixelArray(in, file_h, info_h);
 
-    ft_iterateLife(&array, info_h.Height, info_h.Width, 2);
+    ft_iterateLife(&array, info_h.Height, info_h.Width, 5);
 
     for (int i = 0; i < info_h.Height; i++) {
         for (int j = 0; j < info_h.Width; j++) {

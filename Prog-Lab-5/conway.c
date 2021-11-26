@@ -24,14 +24,14 @@ int **declare(int height, int width) {
 int getNeighbours(int **array, int height, int width, int y, int x) {
     int nb_count = 0;
 
-    nb_count += (x - 1 >= 0) ? array[y][x - 1] : 0;
-    nb_count += (x + 1 < width) ? array[y][x + 1] : 0;
-    nb_count += (y - 1 >= 0) ? array[y - 1][x] : 0;
-    nb_count += (y + 1 < height) ? array[y + 1][x] : 0;
-    nb_count += (x - 1 >= 0 && y - 1 >= 0) ? array[y - 1][x - 1] : 0;
-    nb_count += (x + 1 < width && y - 1 >= 0) ? array[y - 1][x + 1] : 0;
-    nb_count += (x - 1 >= 0 && y + 1 < height) ? array[y + 1][x - 1] : 0;
-    nb_count += (x + 1 < width && y + 1 < height) ? array[y + 1][x + 1] : 0;
+    nb_count += (x - 1 >= 0) ? !array[y][x - 1] == REVERSED : 0;
+    nb_count += (x + 1 < width) ? !array[y][x + 1] == REVERSED : 0;
+    nb_count += (y - 1 >= 0) ? !array[y - 1][x] == REVERSED : 0;
+    nb_count += (y + 1 < height) ? !array[y + 1][x] == REVERSED : 0;
+    nb_count += (x - 1 >= 0 && y - 1 >= 0) ? !array[y - 1][x - 1] == REVERSED : 0;
+    nb_count += (x + 1 < width && y - 1 >= 0) ? !array[y - 1][x + 1] == REVERSED : 0;
+    nb_count += (x - 1 >= 0 && y + 1 < height) ? !array[y + 1][x - 1] == REVERSED : 0;
+    nb_count += (x + 1 < width && y + 1 < height) ? !array[y + 1][x + 1] == REVERSED : 0;
 
     return nb_count;
 }
@@ -42,7 +42,11 @@ void iterateLife(int ***array, int height, int width) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int nb_count = getNeighbours((*array), height, width, i, j);
-            new_arr[i][j] = (nb_count == 2 || nb_count == 3) ? 1 : 0;
+            if (!(*array)[i][j] == REVERSED) {
+                new_arr[i][j] = !(nb_count == 2 || nb_count == 3) == REVERSED;
+            } else {
+                new_arr[i][j] = !(nb_count == 3) == REVERSED;
+            }
         }
     }
 
