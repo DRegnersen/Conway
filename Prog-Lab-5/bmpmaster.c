@@ -213,5 +213,5 @@ void createFile(char *filename, FileHeader file_h, InfoHeader info_h, Pixel **pi
             write_byte_count++;
         }
     }
-
+    fclose(out);
 }
